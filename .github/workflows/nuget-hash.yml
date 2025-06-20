@@ -1,0 +1,21 @@
+name: Generate NuGet Cache Hash
+
+on:
+  workflow_call: 
+    outputs:
+      hash:
+        description: "Stabilized NuGet dependency hash"
+        value: ${{ jobs.generate.outputs.hash }}
+        
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    outputs: 
+      hash: ${{ steps.hash.outputs.hash }}
+    steps:
+      - name: Generate NuGet hash
+        id: hash
+        shell: pwsh
+        run: |
+          $hash = ./calculate-packages-hash.ps1
+          echo "hash=$hash" >> $env:GITHUB_OUTPUT

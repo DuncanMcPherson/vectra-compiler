@@ -1,0 +1,116 @@
+name: Build and Validate changes
+
+on:
+  pull_request: 
+    branches:
+      - master
+        
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Compute NuGet Hash
+        id: nuget-hash
+        uses: ./.github/workflows/nuget-hash.yml
+      - name: Cache Nuget
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ steps.nuget-hash.outputs.hash }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+      - name: Setup .Net 9
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 9.0.x
+      - name: Add Private NuGet source
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          dotnet nuget add source https://nuget.pkg.github.com/DuncanMcPherson/index.json \
+            --name "github" \
+            --username "${{ github.repository_owner }}" \
+            --password "${{ secrets.GITHUB_TOKEN }}" \
+            --store-password-in-clear-text
+      - name: Build and Restore
+        run: |
+          dotnet restore
+          dotnet build --no-restore --configuration Release
+  test:
+    runs-on: ubuntu-latest
+    name: Test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Calculate NuGet hash
+        uses: ./.github/workflows/nuget-hash.yml
+      - name: Setup .Net 9
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 9.0.x
+      - name: Add Private Nuget source
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          dotnet nuget add source https://nuget.pkg.github.com/DuncanMcPherson/index.json \
+          --name "github" \
+          --username "${{ github.repository_owner }}" \
+          --password "${{ secrets.GITHUB_TOKEN }}" \
+          --store-password-in-clear-text
+      - name: Restore and test
+        run: |
+          dotnet restore
+          dotnet test --configuration Release \
+          --logger "trx;LogFileName=TestResults.trx" \
+          --collect:"XPlat Code Coverage
+        continue-on-error: true
+      - name: ReportGenerator
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.4.7
+        with:
+          reports: '**/TestResults/**/coverage.cobertura.xml'
+          targetdir: coveragereport
+          reporttypes: HtmlSummary;MarkdownSummary
+      - name: Fail if coverage below threshold
+        env:
+          THRESHOLD: 80.0
+        run: |
+          set -euxo pipefail
+
+          SUMMARY_FILE=$(find coveragereport -maxdepth 1 -type f -iname "*.md" | head -n1)
+          echo "Using summary file: $SUMMARY_FILE"
+
+          LINE_COV_ROW=$(grep -E "^\|\s*\*\*Line coverage:\*\*" "$SUMMARY_FILE" || true)
+          if [ -z "$LINE_COV_ROW" ]; then
+          echo "❌ Could not find the '**Line coverage:**' row in $SUMMARY_FILE"
+          exit 1
+          fi
+          echo "Found line coverage row: $LINE_COV_ROW"
+          TOTAL_COVERAGE=$(echo "$LINE_COV_ROW" \
+          | sed -E 's/.*\|\s*([0-9]+(\.[0-9]+)?)%.*/\1/')
+
+          echo "ℹ️ Total line coverage = $TOTAL_COVERAGE% (threshold = $THRESHOLD%)"
+
+          awk -v cov="$TOTAL_COVERAGE" -v thr="$THRESHOLD" 'BEGIN {
+                if (cov + 0 < thr + 0) {
+                  print "❌ Coverage below threshold"
+                  exit 1
+                } else {
+                  print "✅ Coverage meets threshold"
+                  exit 0
+                }
+              }'
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults
+          path: '**/TestResults/**/*.trx'
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: CoverageReport
+          path: |
+            coveragereport
+            '**/TestResults/**/*.xml'
