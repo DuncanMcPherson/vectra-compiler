@@ -9,6 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Config", "Config", "{D48E73
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipelines", "Pipelines", "{AFF9022F-DC12-4B1E-A20E-7D805AE5ADE3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestCode", "TestCode", "{D61B722F-6E75-4BD1-A143-346BBE3308BB}"
+	ProjectSection(SolutionItems) = preProject
+		TestCode\Program.vec = TestCode\Program.vec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

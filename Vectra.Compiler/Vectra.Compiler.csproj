@@ -1,15 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
+        <OutputType>Library</OutputType>
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Title>Vectra Compiler</Title>
+        <Authors>DuncanMcPherson</Authors>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="Vectra.AST" Version="2.2.1" />
-      <PackageReference Include="Vectra.Bytecode" Version="2.3.0" />
+      <PackageReference Include="Vectra.Bytecode" Version="2.3.4" />
     </ItemGroup>
 
 </Project>
