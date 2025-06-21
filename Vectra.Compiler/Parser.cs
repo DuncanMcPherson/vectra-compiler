@@ -211,7 +211,7 @@ internal sealed class Parser
     {
         return ParseBinary();
     }
-    
+
     private IExpressionNode ParseBinary()
     {
         var left = ParsePrimary();
@@ -220,7 +220,8 @@ internal sealed class Parser
         {
             var opToken = Advance();
             var right = ParsePrimary(); // Precedence coming later
-            left = new BinaryExpressionNode(opToken.Lexeme, left, right, new SourceSpan(left.Span.StartLine, left.Span.StartColumn, right.Span.EndLine, right.Span.EndColumn));
+            left = new BinaryExpressionNode(opToken.Lexeme, left, right,
+                new SourceSpan(left.Span.StartLine, left.Span.StartColumn, right.Span.EndLine, right.Span.EndColumn));
         }
 
         return left;
@@ -232,7 +233,8 @@ internal sealed class Parser
 
         return token.Type switch
         {
-            TokenType.Number or TokenType.String => new LiteralExpressionNode(token.Type == TokenType.Number ? int.Parse(token.Lexeme) : token.Lexeme,
+            TokenType.Number or TokenType.String => new LiteralExpressionNode(
+                token.Type == TokenType.Number ? int.Parse(token.Lexeme) : token.Lexeme,
                 new(token.Line, token.Column, Peek().Line, Peek().Column)),
             TokenType.Identifier => ParsePossibleCall(new IdentifierExpressionNode(token.Lexeme,
                 new SourceSpan(token.Line, token.Column, Peek().Line, Peek().Column))),
@@ -251,16 +253,20 @@ internal sealed class Parser
         Advance();
         var methodNameToken = Consume(TokenType.Identifier, "Expected method name after '.'");
         var arguments = new List<IExpressionNode>();
+        // Consume the "("
+        Advance();
         if (!Match(")"))
         {
             do
             {
                 arguments.Add(ParseExpression());
             } while (Match(","));
+
+            Expect(")", "Expected ')' after arguments");
         }
-        
-        Expect(")", "Expected ')' after arguments");
-        return new CallExpressionNode(expr, arguments, methodNameToken.Lexeme, new SourceSpan(expr.Span.StartLine, expr.Span.StartColumn, Previous().Line, Previous().Column));
+
+        return new CallExpressionNode(expr, arguments, methodNameToken.Lexeme,
+            new SourceSpan(expr.Span.StartLine, expr.Span.StartColumn, Previous().Line, Previous().Column));
     }
 
     #region Utilities
@@ -299,5 +305,6 @@ internal sealed class Parser
 
     private static bool IsBinaryOperator(string lexeme) =>
         lexeme is "+" or "-" or "*" or "/" or "==" or "!=" or ">" or "<" or ">=" or "<=";
+
     #endregion
 }

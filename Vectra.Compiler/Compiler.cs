@@ -1,4 +1,7 @@
-﻿using Vectra.Bytecode;
+﻿using System.Runtime.CompilerServices;
+using Vectra.Bytecode;
+
+[assembly: InternalsVisibleTo("Vectra.Compiler.Tests")]
 
 namespace Vectra.Compiler;
 
