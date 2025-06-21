@@ -76,12 +76,12 @@ jobs:
           dotnet-version: 9.0.x
       - name: Add Private NuGet source
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
         run: |
           dotnet nuget add source https://nuget.pkg.github.com/DuncanMcPherson/index.json \
             --name "github" \
             --username "${{ github.repository_owner }}" \
-            --password "${{ secrets.GITHUB_TOKEN }}" \
+            --password "${{ secrets.DEPLOY_TOKEN }}" \
             --store-password-in-clear-text
       - name: Build and Restore
         run: |
