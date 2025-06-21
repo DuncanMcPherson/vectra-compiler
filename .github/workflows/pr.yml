@@ -11,6 +11,8 @@ jobs:
     outputs: 
       hash: ${{ steps.set-hash.outputs.hash }}
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
       - name: Calculate hash
         id: set-hash
         shell: pwsh
