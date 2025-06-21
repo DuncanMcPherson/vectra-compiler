@@ -13,6 +13,7 @@ jobs:
     steps:
       - name: Calculate hash
         id: set-hash
+        shell: pwsh
         run: |
           $projectFiles = @(Get-ChildItem -Recurse -Filter *.csproj)
           $packageReferences = @()
