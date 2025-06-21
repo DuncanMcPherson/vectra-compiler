@@ -12,7 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipelines", "Pipelines", "{
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\pr.yml = .github\workflows\pr.yml
 		.github\workflows\release.yml = .github\workflows\release.yml
-		.github\workflows\nuget-hash.yml = .github\workflows\nuget-hash.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestCode", "TestCode", "{D61B722F-6E75-4BD1-A143-346BBE3308BB}"

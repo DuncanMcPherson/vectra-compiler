@@ -6,20 +6,65 @@ on:
       - master
         
 jobs:
+  hash:
+    runs-on: ubuntu-latest
+    outputs: 
+      hash: ${{ steps.set-hash.outputs.hash }}
+    steps:
+      - name: Calculate hash
+        id: set-hash
+        run: |
+          $projectFiles = @(Get-ChildItem -Recurse -Filter *.csproj)
+          $packageReferences = @()
+
+          echo "Found $($projectFiles.Count) project files."
+          if ($projectFiles.Count -eq 0) {
+            echo "No project files found. Exiting."
+            exit 1
+          }
+
+          foreach ($file in $projectFiles) {
+            [xml]$xml = Get-Content $file.FullName
+            $refs = @($xml.Project.ItemGroup.PackageReference)
+            echo "Found $($refs.Count) package references in $($file.FullName)."
+            if ($refs.Count -eq 0) {
+              echo "No package references found in $($file.FullName)."
+              continue
+            }
+            foreach ($ref in $refs) {
+              echo "Processing package reference: $($ref.Include) version $($ref.Version)"
+              $line = "$($ref.Include):$($ref.Version)"
+              $packageReferences += $line
+            }
+          }
+          echo "Found $($packageReferences.Count) package references."
+          if ($packageReferences.Count -eq 0) {
+            echo "No package references found. Exiting."
+            exit 0
+          }
+          echo "Package references: $($packageReferences -join ', ')"
+
+          $packageReferences = $packageReferences | Sort-Object
+          $joined = [string]::Join("`n", $packageReferences)
+          $hash = [System.BitConverter]::ToString(
+            (New-Object -TypeName System.Security.Cryptography.SHA256Managed).ComputeHash(
+              [System.Text.Encoding]::UTF8.GetBytes($joined)
+            )
+          ) -replace "-", ""
+
+          echo "hash=$hash" >> $env:GITHUB_OUTPUT
   build:
     runs-on: ubuntu-latest
     name: Build
+    needs: hash
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Compute NuGet Hash
-        id: nuget-hash
-        uses: ./.github/workflows/nuget-hash.yml
       - name: Cache Nuget
         uses: actions/cache@v3
         with:
           path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ steps.nuget-hash.outputs.hash }}
+          key: ${{ runner.os }}-nuget-${{ needs.hash.outputs.hash }}
           restore-keys: |
             ${{ runner.os }}-nuget-
       - name: Setup .Net 9
@@ -42,15 +87,19 @@ jobs:
   test:
     runs-on: ubuntu-latest
     name: Test
+    needs: hash
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Calculate NuGet hash
-        uses: ./.github/workflows/nuget-hash.yml
       - name: Setup .Net 9
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 9.0.x
+      - name: Cache NuGet
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ needs.hash.outputs.hash }}
       - name: Add Private Nuget source
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
