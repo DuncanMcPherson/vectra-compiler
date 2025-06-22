@@ -1,0 +1,7 @@
+space Test;
+
+class Program {
+    void main() {
+        return 42;
+    }
+}

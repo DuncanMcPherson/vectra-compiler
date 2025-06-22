@@ -1,0 +1,40 @@
+{
+  "branches": [
+    "master"
+  ],
+  "tagFormat": "v${version}",
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "CHANGELOG.md"
+      }
+    ],
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "sed -i \"s|<Version>.*</Version>|<Version>${nextRelease.version}</Version>|\" Vectra.Compiler/Vectra.Compiler.csproj"
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "**/*.csproj",
+          "CHANGELOG.md"
+        ],
+        "message": "chore: v${nextRelease.version} [skip ci]"
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "successComment": "Release v${nextRelease.version} deployed! May the Force be with us.\n\n${nextRelease.notes}",
+        "failTitle": "Release failed for v${lastRelease.version}",
+        "failComment": "⚠️ The automated release for v${lastRelease.version} has failed at the `${error.command}` step.\n\n> **Error Message**: ${error.message}\n\nPlease investigate the logs and retrigger the release once fixed."
+      }
+    ]
+  ]
+}
