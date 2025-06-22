@@ -7,6 +7,9 @@
         <Nullable>enable</Nullable>
         <Title>Vectra Compiler</Title>
         <Authors>DuncanMcPherson</Authors>
+        <RepositoryUrl>https://github.com/DuncanMcPherson/vectra-compiler</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <Version>1.0.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
