@@ -6,6 +6,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Config", "Config", "{D48E73
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		.releaserc.json = .releaserc.json
+		CHANGELOG.md = CHANGELOG.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipelines", "Pipelines", "{AFF9022F-DC12-4B1E-A20E-7D805AE5ADE3}"
