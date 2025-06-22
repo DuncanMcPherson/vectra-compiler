@@ -117,7 +117,7 @@ jobs:
           dotnet restore
           dotnet test --configuration Release \
           --logger "trx;LogFileName=TestResults.trx" \
-          --collect:"XPlat Code Coverage
+          --collect:"XPlat Code Coverage"
         continue-on-error: true
       - name: ReportGenerator
         uses: danielpalme/ReportGenerator-GitHub-Action@5.4.7
@@ -132,6 +132,11 @@ jobs:
           set -euxo pipefail
 
           SUMMARY_FILE=$(find coveragereport -maxdepth 1 -type f -iname "*.md" | head -n1)
+          if [ -z "$SUMMARY_FILE" ]; then
+          echo "Could not locate coverage file"
+          exit 1
+          fi
+          
           echo "Using summary file: $SUMMARY_FILE"
 
           LINE_COV_ROW=$(grep -E "^\|\s*\*\*Line coverage:\*\*" "$SUMMARY_FILE" || true)
