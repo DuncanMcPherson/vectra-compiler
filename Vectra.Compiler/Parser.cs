@@ -182,6 +182,12 @@ internal sealed class Parser
         if (Match("return"))
             return ParseReturnStatement();
 
+        if (Match("let"))
+            return ParseVariableDeclaration(false);
+
+        if (Check(TokenType.Identifier) && PeekNext().Type == TokenType.Identifier) // TODO: refine support for type keywords
+            return ParseVariableDeclaration(true);
+
         return ParseExpressionStatement();
     }
 
@@ -198,6 +204,27 @@ internal sealed class Parser
         Expect(";", "Expected ';' after return value");
         return new ReturnStatementNode(value,
             new(startLocation.Line, startLocation.Column, Previous().Line, Previous().Column));
+    }
+
+    private VariableDeclarationNode ParseVariableDeclaration(bool isExplicit)
+    {
+        string? explicitType = null;
+        var typeToken = Peek();
+        if (isExplicit)
+        {
+            explicitType = Advance().Lexeme;
+        }
+        
+        var nameToken = Consume(TokenType.Identifier, "Expected identifier after 'let' or type keyword");
+        var name = nameToken.Lexeme;
+        IExpressionNode? initializer = null;
+        if (Match("="))
+            initializer = ParseExpression();
+        
+        if (!isExplicit && initializer == null)
+            throw new Exception($"Implicit variable declaration requires an initializer at line {Peek().Line}, column {Peek().Column}.");
+        Expect(";", "Expected ';' after variable declaration");
+        return new VariableDeclarationNode(name, explicitType, initializer, new (typeToken.Line, typeToken.Column, Previous().Line, Previous().Column));
     }
 
     private ExpressionStatementNode ParseExpressionStatement()
