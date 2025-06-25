@@ -1,10 +1,12 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Vectra.Bytecode;
 
 [assembly: InternalsVisibleTo("Vectra.Compiler.Tests")]
 
 namespace Vectra.Compiler;
 
+[ExcludeFromCodeCoverage]
 public static class Compiler
 {
     // TODO: Handle failures gracefully
