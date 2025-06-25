@@ -105,12 +105,12 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ needs.hash.outputs.hash }}
       - name: Add Private Nuget source
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DEPLOY_KEY }}
         run: |
           dotnet nuget add source https://nuget.pkg.github.com/DuncanMcPherson/index.json \
           --name "github" \
           --username "${{ github.repository_owner }}" \
-          --password "${{ secrets.GITHUB_TOKEN }}" \
+          --password "${{ secrets.DEPLOY_KEY }}" \
           --store-password-in-clear-text
       - name: Restore and test
         run: |
