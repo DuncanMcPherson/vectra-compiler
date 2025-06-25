@@ -136,14 +136,24 @@ internal sealed class Parser
     /// </returns>
     private IMemberNode ParseMemberDeclaration()
     {
+        // TODO: Introduce support for constructors
+        
+        // Validate that the current token is a valid member declaration (Identifier or Keyword)
         if (!Check(TokenType.Identifier, TokenType.Keyword))
             throw new Exception($"Expected identifier or keyword at {Peek().Line}");
-        // TODO: Introduce support for constructors
+        // get the type of the member (Identifier or Keyword)
         var typeToken = Advance();
+        // Validate and retrieve the name of the member;
         var nameToken = Consume(TokenType.Identifier, "Expected identifier after type");
+        // Check if the member is a method declaration
         if (Match("("))
             return ParseMethodDeclaration(typeToken, nameToken);
-        // TODO: Introduce support for fields and properties
+        // Check if the member is a field declaration
+        if (Match("=") || Match(";"))
+            return ParseFieldDeclaration(typeToken, nameToken);
+        // Check if the member is a property declaration
+        if (Match("{"))
+            return ParsePropertyDeclaration(typeToken, nameToken);
         throw new Exception($"Unknown member declaration at line {Peek().Line}, column {Peek().Column}.");
     }
 
@@ -175,6 +185,52 @@ internal sealed class Parser
 
         return new MethodDeclarationNode(name.Lexeme, parameters, statements,
             new(returnType.Line, returnType.Column, Previous().Line, Previous().Column), returnType.Lexeme);
+    }
+
+    private FieldDeclarationNode ParseFieldDeclaration(Token.Token type, Token.Token name)
+    {
+        // Field is left uninitialized
+        if (Match(";"))
+            return new FieldDeclarationNode(name.Lexeme, type.Lexeme, null,
+                new(type.Line, type.Column, Previous().Line, Previous().Column));
+        // Field is initialized (need to skip the '=' sign)
+        Expect("=", "Expected '=' after field declaration");
+        var initializer = ParseExpression();
+        Expect(";", "Expected ';' after field initializer");
+        return new FieldDeclarationNode(name.Lexeme, type.Lexeme, initializer,
+            new(type.Line, type.Column, Previous().Line, Previous().Column));
+    }
+
+    private PropertyDeclarationNode ParsePropertyDeclaration(Token.Token type, Token.Token name)
+    {
+        // Default getter and setter to false
+        var hasGetter = false;
+        var hasSetter = false;
+        
+        // we have already skipped the opening '{'
+
+        while (!IsAtEnd() && !Match("}"))
+        {
+            var accessorType = Consume(TokenType.Identifier, "Expected 'get' or 'set' after property declaration");
+            switch (accessorType.Lexeme)
+            {
+                case "get":
+                    if (hasGetter)
+                        throw new Exception("Property cannot have more than one getter.");
+                    hasGetter = true;
+                    break;
+                case "set":
+                    if (hasSetter)
+                        throw new Exception("Property cannot have more than one setter.");
+                    hasSetter = true;
+                    break;
+                default:
+                    throw new Exception($"Unexpected token '{accessorType.Lexeme}' at line {accessorType.Line}, column {accessorType.Column}.");
+            }
+            Expect(";", "Expected ';' after property accessor");;
+        }
+        
+        return new PropertyDeclarationNode(name.Lexeme, type.Lexeme, hasGetter, hasSetter, new(type.Line, type.Column, Previous().Line, Previous().Column));
     }
 
     private IStatementNode ParseStatement()

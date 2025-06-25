@@ -2,6 +2,15 @@ space Test;
 
 class Program {
     void main() {
-        return 42;
+        // DO NOTHING
+    }
+}
+
+class Player {
+    string name;
+    number Health { get; set; }
+    
+    bool IsAlive() {
+        return this.Health > 0;
     }
 }
