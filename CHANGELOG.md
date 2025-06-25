@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/DuncanMcPherson/vectra-compiler/compare/v1.2.0...v1.2.1) (2025-06-25)
+
+
+### Bug Fixes
+
+* **deps:** bump Vectra.AST to version 2.4.0 ([6e959eb](https://github.com/DuncanMcPherson/vectra-compiler/commit/6e959eb40a7756f6fa0f0a5fc1fd1bd15d68ec9f))
+
 # [1.2.0](https://github.com/DuncanMcPherson/vectra-compiler/compare/v1.1.0...v1.2.0) (2025-06-25)
 
 
