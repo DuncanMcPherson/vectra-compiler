@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using Vectra.AST;
 using Vectra.Bytecode;
 
 [assembly: InternalsVisibleTo("Vectra.Compiler.Tests")]
@@ -18,6 +20,7 @@ public static class Compiler
     /// <param name="sourcePath">
     /// The file path of the source code to be compiled. The path must point to an existing file.
     /// </param>
+    [ExcludeFromCodeCoverage]
     public static void Compile(string sourcePath)
     {
         if (!File.Exists(sourcePath))
@@ -37,5 +40,32 @@ public static class Compiler
         var program = bytecodeGenerator.Generate(module);
         // TODO: Support for custom output locations
         BytecodeWriter.WriteToFile(program);
+    }
+
+    /// Retrieves the abstract syntax tree (AST) from the specified source code file.
+    /// This method reads the source code from the given file path, tokenizes the code using the lexer,
+    /// and parses the tokens into an AST representation. If the source file does not exist, an error
+    /// message is logged, and the method returns null.
+    /// <param name="sourcePath">
+    /// The file path of the source code to process. The path must point to an existing file.
+    /// </param>
+    /// <returns>
+    /// A `VectraASTModule` representing the parsed abstract syntax tree of the source code,
+    /// or `null` if the specified file does not exist.
+    /// </returns>
+    [ExcludeFromCodeCoverage]
+    public static VectraASTModule? GetAST(string sourcePath)
+    {
+        if (!File.Exists(sourcePath))
+        {
+            Console.Error.WriteLine($"File '{sourcePath}' does not exist.");
+            return null;
+        }
+        
+        var sourceCode = File.ReadAllText(sourcePath);
+        var lexer = new Lexer.Lexer(sourceCode);
+        var tokens = lexer.Tokenize();
+        var parser = new Parser(tokens);
+        return parser.Parse();
     }
 }
