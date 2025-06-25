@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/DuncanMcPherson/vectra-compiler/compare/v1.2.1...v1.3.0) (2025-06-25)
+
+
+### Features
+
+* Add support for field and property declarations ([dc30e50](https://github.com/DuncanMcPherson/vectra-compiler/commit/dc30e50a5fc22381349a8246a1eb582b103e6335))
+
 ## [1.2.1](https://github.com/DuncanMcPherson/vectra-compiler/compare/v1.2.0...v1.2.1) (2025-06-25)
 
 
