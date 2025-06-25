@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/DuncanMcPherson/vectra-compiler/compare/v1.1.0...v1.2.0) (2025-06-25)
+
+
+### Features
+
+* VC-1 Add function `GetAST` to return a raw AST module ([91e7789](https://github.com/DuncanMcPherson/vectra-compiler/commit/91e7789c101eb868844fd009b139186a77a5a672))
+
 # [1.1.0](https://github.com/DuncanMcPherson/vectra-compiler/compare/v1.0.1...v1.1.0) (2025-06-25)
 
 
