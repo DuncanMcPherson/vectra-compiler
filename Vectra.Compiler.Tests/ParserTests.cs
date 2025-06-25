@@ -259,6 +259,7 @@ public class ParserTests
             new Token.Token(TokenType.Symbol, "(", 3, 14),
             new Token.Token(TokenType.Symbol, ")", 3, 15),
             new Token.Token(TokenType.Symbol, "{", 3, 17),
+            new Token.Token(TokenType.Identifier, "number", 4, 2), // TODO: `number` is intended to be a keyword, not an identifier. Currently the lexer identifies it as an identifier.
             new Token.Token(TokenType.Identifier, "x", 4, 9),
             new Token.Token(TokenType.Symbol, ";", 4, 10),
             new Token.Token(TokenType.Symbol, "}", 5, 5),
@@ -273,11 +274,9 @@ public class ParserTests
         var classNode = (ClassDeclarationNode)result.RootSpace.Declarations[0];
         var methodNode = (MethodDeclarationNode)classNode.Members[0];
         methodNode.Body.Should().HaveCount(1);
-        methodNode.Body[0].Should().BeOfType<ExpressionStatementNode>();
-        var exprStmtNode = (ExpressionStatementNode)methodNode.Body[0];
-        exprStmtNode.Expression.Should().BeOfType<IdentifierExpressionNode>();
-        var identifierNode = (IdentifierExpressionNode)exprStmtNode.Expression;
-        identifierNode.Name.Should().Be("x");
+        methodNode.Body[0].Should().BeOfType<VariableDeclarationNode>();
+        var exprStmtNode = (VariableDeclarationNode)methodNode.Body[0];
+        exprStmtNode.Name.Should().Be("x");
     }
 
     [Test]

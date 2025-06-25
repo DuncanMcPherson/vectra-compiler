@@ -9,12 +9,12 @@
         <Authors>DuncanMcPherson</Authors>
         <RepositoryUrl>https://github.com/DuncanMcPherson/vectra-compiler</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <Version>1.0.1</Version>
+        <Version>1.1.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Vectra.AST" Version="2.2.1" />
-      <PackageReference Include="Vectra.Bytecode" Version="2.3.4" />
+      <PackageReference Include="Vectra.AST" Version="2.3.0" />
+      <PackageReference Include="Vectra.Bytecode" Version="2.4.0" />
     </ItemGroup>
 
 </Project>

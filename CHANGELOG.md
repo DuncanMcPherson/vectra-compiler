@@ -1,3 +1,15 @@
+# [1.1.0](https://github.com/DuncanMcPherson/vectra-compiler/compare/v1.0.1...v1.1.0) (2025-06-25)
+
+
+### Bug Fixes
+
+* **ci:** fixed authentication with GitHub Packages ([87d4981](https://github.com/DuncanMcPherson/vectra-compiler/commit/87d4981965a4b59143b27414421240a9c02c9204))
+
+
+### Features
+
+* Add support for variable declarations ([38189bf](https://github.com/DuncanMcPherson/vectra-compiler/commit/38189bf1588bed4610304aaebe904bec0205c328))
+
 ## [1.0.1](https://github.com/DuncanMcPherson/vectra-compiler/compare/v1.0.0...v1.0.1) (2025-06-22)
 
 

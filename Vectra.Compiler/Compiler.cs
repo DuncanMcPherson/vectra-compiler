@@ -7,6 +7,7 @@ using Vectra.Bytecode;
 
 namespace Vectra.Compiler;
 
+[ExcludeFromCodeCoverage]
 public static class Compiler
 {
     // TODO: Handle failures gracefully
