@@ -17,7 +17,12 @@ internal sealed class Lexer
         "void",
         "return",
         "let",
-        "this"
+        "this",
+        "number",
+        "string",
+        "bool",
+        "get",
+        "set"
     ];
 
     private static readonly HashSet<string> MultiCharOperators =
