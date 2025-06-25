@@ -13,7 +13,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Vectra.AST" Version="2.3.0" />
+      <PackageReference Include="Vectra.AST" Version="2.4.0" />
       <PackageReference Include="Vectra.Bytecode" Version="2.4.0" />
     </ItemGroup>
 
