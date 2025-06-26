@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/DuncanMcPherson/vectra-compiler/compare/v1.3.0...v1.4.0) (2025-06-26)
+
+
+### Features
+
+* Add support for 'new' expressions ([1ecc9ca](https://github.com/DuncanMcPherson/vectra-compiler/commit/1ecc9ca089c1e76dad0a38d483dc047ea40a04da))
+
 # [1.3.0](https://github.com/DuncanMcPherson/vectra-compiler/compare/v1.2.1...v1.3.0) (2025-06-25)
 
 
