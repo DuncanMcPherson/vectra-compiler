@@ -324,6 +324,7 @@ internal sealed class Parser
             // TODO: Add support for "this" keyword
             TokenType.Keyword when token.Lexeme == "this" => ParsePossibleCall(new IdentifierExpressionNode("this",
                 new SourceSpan(token.Line, token.Column, token.Line, token.Column + 4))),
+            TokenType.Keyword when token.Lexeme == "new" => ParseNewExpression(token),
             _ => throw new Exception($"Unexpected token '{token.Lexeme}' at line {token.Line}, column {token.Column}.")
         };
     }
@@ -350,6 +351,24 @@ internal sealed class Parser
 
         return new CallExpressionNode(expr, arguments, methodNameToken.Lexeme,
             new SourceSpan(expr.Span.StartLine, expr.Span.StartColumn, Previous().Line, Previous().Column));
+    }
+
+    private NewExpressionNode ParseNewExpression(Token.Token token)
+    {
+        var typeToken = Consume(TokenType.Identifier, "Expected type name after 'new'");
+        Expect("(", "Expected '(' after type name");
+        
+        var args = new List<IExpressionNode>();
+        if (Match(")"))
+            return new NewExpressionNode(typeToken.Lexeme, args,
+                new SourceSpan(token.Line, token.Column, Previous().Line, Previous().Column));
+        do
+        {
+            args.Add(ParseExpression());
+        } while (Match(","));
+        Expect(")", "Expected ')' after arguments");
+
+        return new NewExpressionNode(typeToken.Lexeme, args, new SourceSpan(token.Line, token.Column, Previous().Line, Previous().Column));
     }
 
     #region Utilities

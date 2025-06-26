@@ -22,7 +22,8 @@ internal sealed class Lexer
         "string",
         "bool",
         "get",
-        "set"
+        "set",
+        "new"
     ];
 
     private static readonly HashSet<string> MultiCharOperators =
